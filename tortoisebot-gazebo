@@ -37,7 +37,15 @@ WORKDIR /simulation_ws
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
 # Start simulation
+# ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /simulation_ws/devel/setup.bash && roslaunch tortoisebot_gazebo tortoisebot_playground.launch \
+#     & source /opt/ros/noetic/setup.bash && source /simulation_ws/devel/setup.bash && rosrun tortoisebot_waypoints tortoisebot_action_server.py && sleep 15s \
+#     & source /opt/ros/noetic/setup.bash && source /simulation_ws/devel/setup.bash && rostest tortoisebot_waypoints waypoints_test.test --reuse-master"]
+
 ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /simulation_ws/devel/setup.bash && roslaunch tortoisebot_gazebo tortoisebot_playground.launch"]
+
+# CMD ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /simulation_ws/devel/setup.bash && rosrun tortoisebot_waypoints tortoisebot_action_server.py && sleep 15s"]
+
+# ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /simulation_ws/devel/setup.bash && rostest tortoisebot_waypoints waypoints_test.test --reuse-master"]
 
 # replace setup.bash in ros_entrypoint.sh
 # RUN sed -i 's|source "/opt/ros/\$ROS_DISTRO/setup.bash"|source "/catkin_ws/devel/setup.bash"|g' /ros_entrypoint.sh
@@ -54,10 +62,20 @@ ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /sim
 
 # Command to build:
 # cd ~/simulation_ws
-# docker build -f ./src/ros1_ci/Dockerfile -t ros1-ci .
+# docker build -f ./src/ros1_ci/tortoisebot-gazebo -t tortoisebot-gazebo .
 
 # This is the command that gets us that working teleop hell yah bro 
-# docker run --rm -it \
+# docker run -d --rm \
+#   -e DISPLAY=${DISPLAY} \
+#   -e ROS_MASTER_URI=http://simulation:11311 \
+#   -e ROS_HOSTNAME=simulation \
+#   -v /tmp/.X11-unix:/tmp/.X11-unix \
+#   -e LIBGL_ALWAYS_SOFTWARE=1 \
+#   -v ~/.gazebo:/root/.gazebo \
+#   --name tortoisebot-gazebo \
+#   tortoisebot-gazebo
+
+#   docker run --rm -it \
 #   -e DISPLAY=${DISPLAY} \
 #   -v /tmp/.X11-unix:/tmp/.X11-unix \
 #   -e LIBGL_ALWAYS_SOFTWARE=1 \
