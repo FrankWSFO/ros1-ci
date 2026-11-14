@@ -52,3 +52,7 @@ services:
     depends_on:
       action:
         condition: service_healthy
+
+# Proper command 
+# cd ~/simulation_ws/src/ros1_ci
+# docker compose up --exit-code-from test
