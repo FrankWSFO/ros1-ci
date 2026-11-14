@@ -1,7 +1,7 @@
-version: '3'
+version: '2.4'
 services:
   simulation:
-    image: tortoisebot-gazebo
+    image: frankwsfo/fdw-cp24:tortoisebot-gazebo
     container_name: tortoisebot-gazebo
     # init: true
     environment:
@@ -12,27 +12,43 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ~/.gazebo:/root/.gazebo
-  # tortoisebot-action-server:
-  #   image: tortoisebot-action-server
-  #   container_name: tortoisebot-action-server
-  #   environment:
-  #     - DISPLAY=${DISPLAY}
-  #     - LIBGL_ALWAYS_SOFTWARE=1
-  #     # - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-  #     # - ROS_DOMAIN_ID=1
-  #   volumes:
-  #     - /tmp/.X11-unix:/tmp/.X11-unix
-  # fastbot-web:
-  #   image: frankwsfo/fdw-cp22:fastbot-ros2-webapp
-  #   container_name: fastbot-ros2-webapp
-  #   environment:
-  #     - DISPLAY=${DISPLAY}
-  #     - LIBGL_ALWAYS_SOFTWARE=1
-  #     - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-  #     - ROS_DOMAIN_ID=1
-  #   volumes:
-  #     - /tmp/.X11-unix:/tmp/.X11-unix
-  #   ports:
-  #     - "7000:7000"
-  #     - "11315:11315"
-  #     - "9090:9090"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "source /opt/ros/noetic/setup.bash && rosservice list | grep -q /gazebo/get_model_state"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+  action:
+    image: frankwsfo/fdw-cp24:tortoisebot-action-server
+    container_name: tortoisebot-action-server
+    environment:
+      # - DISPLAY=${DISPLAY}
+      # - LIBGL_ALWAYS_SOFTWARE=1
+      - ROS_MASTER_URI=http://simulation:11311 
+      - ROS_HOSTNAME=action 
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ~/.gazebo:/root/.gazebo
+    healthcheck:
+      test: ["CMD", "bash", "-c", "source /opt/ros/noetic/setup.bash && source /simulation_ws/devel/setup.bash && rostopic list | grep -q /tortoisebot_as/goal"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    depends_on:
+      simulation:
+        condition: service_healthy
+  test:
+    image: frankwsfo/fdw-cp24:tortoisebot-test
+    container_name: tortoisebot-test
+    environment:
+      # - DISPLAY=${DISPLAY}
+      # - LIBGL_ALWAYS_SOFTWARE=1
+      - ROS_MASTER_URI=http://simulation:11311 
+      - ROS_HOSTNAME=test 
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ~/.gazebo:/root/.gazebo
+    depends_on:
+      action:
+        condition: service_healthy
