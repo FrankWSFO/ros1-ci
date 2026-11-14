@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   simulation:
-    image: frankwsfo/fdw-cp24:tortoisebot-gazebo
+    image: tortoisebot-gazebo
     container_name: tortoisebot-gazebo
     # init: true
     environment:
@@ -19,7 +19,7 @@ services:
       retries: 12
       start_period: 10s
   action:
-    image: frankwsfo/fdw-cp24:tortoisebot-action-server
+    image: tortoisebot-action-server
     container_name: tortoisebot-action-server
     environment:
       # - DISPLAY=${DISPLAY}
@@ -39,7 +39,7 @@ services:
       simulation:
         condition: service_healthy
   test:
-    image: frankwsfo/fdw-cp24:tortoisebot-test
+    image: tortoisebot-test
     container_name: tortoisebot-test
     environment:
       # - DISPLAY=${DISPLAY}
