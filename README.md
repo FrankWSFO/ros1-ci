@@ -10,4 +10,4 @@ password: \[\[what you find in ~/webpage_ws/jenkins/secrets/initialAdminPassword
 From there, you should see the "Tortoisebot Waypoint Action Test" as one of the jobs that appears on the dashboard. 
 Click on it. 
 Once you've arrived at the job's page, in the bottom left, you can see the builds, which should trigger upon a pull request being accepted. 
-You can click on any build already/currently being built, and in the left side menubar, you can clikc on the "Console Output" button to view console output and see if the build was success (or just see there's a check by the job's name). 
+You can click on any build already/currently being built, and in the left side menubar, you can click on the "Console Output" button to view console output and see if the build was a success (or just see if there's a check by the job's name). 

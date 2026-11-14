@@ -55,4 +55,4 @@ services:
 
 # Proper command 
 # cd ~/simulation_ws/src/ros1_ci
-# docker compose up --exit-code-from test
+# docker-compose up --exit-code-from test
