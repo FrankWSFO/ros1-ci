@@ -30,7 +30,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ~/.gazebo:/root/.gazebo
     healthcheck:
-      test: ["CMD", "bash", "-c", "source /opt/ros/noetic/setup.bash && source /simulation_ws/devel/setup.bash && rostopic list | grep -q /tortoisebot_as/goal"]
+      test: ["CMD", "bash", "-c", "source /opt/ros/noetic/setup.bash && source /simulation_ws/devel/setup.bash && timeout 5 rostopic echo -n 1 /tortoisebot_as/status > /dev/null"]
       interval: 5s
       timeout: 5s
       retries: 12
